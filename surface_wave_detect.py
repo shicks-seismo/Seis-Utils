@@ -5,7 +5,7 @@ Python script to download LDEO surface-wave detection events from last week from
 https://www.ldeo.columbia.edu/~ekstrom/Research/SWD/current/RADB_SWD_grd.html
 and cross-check with events in USGS-NEIC and ISC catalogues.
 Prints out a list of surface wave detections not found in catalogues.
-Python module prerequisites: ObsPy, BeautifulSoup4
+Python module prerequisites: ObsPy, BeautifulSoup, Basemap, Matplotlib
 """
 
 import bs4
@@ -45,9 +45,9 @@ for l in dat:
             hour=int(l[11:13]), minute=int(l[14:16]), second=int(l[17:19]))
         SWD_lat = float(l[23:29])
         SWD_lon = float(l[30:37])
-
-        found = False
-
+    
+        # First try to get event from USGS catalogue. If nothing found, try ISC
+        # catalogue
         try:
             cat = client1.get_events(
                 starttime=SWD_date-dt, endtime=SWD_date+dt, minmagnitude=minmag,
@@ -58,10 +58,14 @@ for l in dat:
                     starttime=SWD_date-dt, endtime=SWD_date+dt, minmagnitude=minmag,
                     latitude=SWD_lat, longitude=SWD_lon, maxradius=dl)
             except:
+
+                # If not found print event and append location to list for plotting
+                # later.
                 print("No corresponding events found in ISC/NEIC catalogues:", l)
                 lats.append(SWD_lat)
                 lons.append(SWD_lon)
 
+# Now make a map showing locations not found
 eq_map = Basemap(projection='robin', lat_0=0, lon_0=-100,
                  resolution='l', area_thresh=1000.0)
 eq_map.drawcoastlines()
