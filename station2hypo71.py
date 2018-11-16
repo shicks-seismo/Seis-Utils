@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 """
 Convert a space-delimited station file to HYPO71 input format
-Input format: Network, station, lat, long, elevation (m)
-(allows 5-character station names for seisan hyp package)
+Input format: Network, station, lat, long, elevation (m).
+(allows 5-character station names for seisan hyp package).
 Usage: station2hypo71.py <infile> <outfile>
 """
 
